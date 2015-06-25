@@ -59,7 +59,6 @@ public class FeedDistributor {
 				while (true) {
 					try {
 						String feed = distributionQueue.take();
-
 						Set<String> subscribers = getSubscribers(feed);
 
 						String fileName = DigestUtils.md5Hex(feed);
@@ -84,27 +83,19 @@ public class FeedDistributor {
 									HttpResponse response = null;
 									try {
 										response = httpclient.execute(post);
-										if (response.getStatusLine()
-												.getStatusCode() == 200) {
+										if (response.getStatusLine().getStatusCode() == 200) {
 											LOG.debug(
-													"Succeeded distributing to subscriber {}",
-													subscriber);
+													"Succeeded distributing to subscriber {}",subscriber);
 										} else {
-											LOG.debug(
-													"Failed distributing to subscriber \"{}\" with error \"{}\"",
-													subscriber,
-													response.getStatusLine());
+											LOG.debug("Failed distributing to subscriber \"{}\" with error \"{}\"",subscriber,response.getStatusLine());
 										}
 									} catch (IOException e) {
 										LOG.debug(
-												"Failed distributing to subscriber: "
-														+ subscriber, e);
+												"Failed distributing to subscriber: "+ subscriber, e);
 									} finally {
 										if (response != null) {
 											if (response.getEntity() != null) {
-												InputStream in = response
-														.getEntity()
-														.getContent();
+												InputStream in = response.getEntity().getContent();
 												if (in != null)
 													in.close();
 											}
@@ -113,12 +104,9 @@ public class FeedDistributor {
 									}
 									// TODO handle retries
 								}
-								LOG.info(
-										"Feed distributed to {} subscribers: {}",
-										subscribers.size(), feed);
+								LOG.info("Feed distributed to {} subscribers: {}",subscribers.size(), feed);
 							} catch (IOException e) {
-								LOG.debug("Failed to distribute feed: " + feed,
-										e);
+								LOG.debug("Failed to distribute feed: " + feed,e);
 							} finally {
 								if (fis != null) {
 									try {
@@ -133,9 +121,7 @@ public class FeedDistributor {
 								}
 							}
 						} else {
-							LOG.debug(
-									"No subscribers for published feed, ignoring: {}",
-									feed);
+							LOG.debug("No subscribers for published feed, ignoring: {}",feed);
 							file.delete();
 						}
 					} catch (InterruptedException e) {
